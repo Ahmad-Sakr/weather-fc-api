@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\v1\CityController;
+use App\Http\Controllers\api\v1\RecordController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,5 +29,12 @@ Route::group(['prefix' => 'v1'], function() {
     |--------------------------------------------------------------------------
     */
     Route::resource('cities', CityController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | 02. Records
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/records', [RecordController::class, 'store']);
 
 });
