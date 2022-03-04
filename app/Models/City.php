@@ -20,4 +20,9 @@ class City extends Model
     {
         return 'name';
     }
+
+    public function records()
+    {
+        return $this->hasMany(Record::class);
+    }
 }
