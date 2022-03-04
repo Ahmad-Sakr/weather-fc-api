@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\api\v1\CityController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+/*
+|--------------------------------------------------------------------------
+| v1
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['prefix' => 'v1'], function() {
+
+    /*
+    |--------------------------------------------------------------------------
+    | 01. Cities
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('cities', CityController::class);
+
 });
