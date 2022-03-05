@@ -25,27 +25,7 @@ class RecordService implements RecordInterface
             $data = $request->validated();
             $city = City::query()->where('name', $data['city'])->first();
 
-            //Create Or Update Record
-            $record = Record::query()
-                ->where('rc_date', $data['rc_date'])
-                ->where('city_id', $city->id)
-                ->first();
-            if(!$record) {
-                $record = Record::query()->create([
-                    'rc_date' => $data['rc_date'],
-                    'city_id' => $city->id,
-                    'created_at' => Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-            }
-            else {
-                $record->touch();
-
-                //Remove Old Details
-                $record->details()->delete();
-            }
-
-            //Save New Details
-            $record->details()->createMany($data['details']);
+            $this->storeRecordInDatabase($data, $city);
 
             DB::commit();
             return $this->success([], '', Response::HTTP_OK);
@@ -53,5 +33,33 @@ class RecordService implements RecordInterface
             DB::rollBack();
             return $this->error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function storeRecordInDatabase($data, $city) {
+
+        //Create Or Update Record
+        $record = Record::query()
+            ->where('rc_date', $data['rc_date'])
+            ->where('city_id', $city->id)
+            ->first();
+        if(!$record) {
+            $record = Record::query()->create([
+                'rc_date' => $data['rc_date'],
+                'city_id' => $city->id,
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s')
+            ]);
+        }
+        else {
+            $record->touch();
+
+            //Remove Old Details
+            $record->details()->delete();
+        }
+
+        //Save New Details
+        $record->details()->createMany($data['details']);
+
+        return $record;
+
     }
 }
