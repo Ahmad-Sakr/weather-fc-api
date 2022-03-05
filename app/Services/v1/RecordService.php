@@ -4,6 +4,7 @@
 namespace App\Services\v1;
 
 
+use App\Events\PullData;
 use App\Http\Requests\v1\RecordRequest;
 use App\Http\Resources\v1\RecordResource;
 use App\Interfaces\v1\RecordInterface;
@@ -14,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Event;
 
 class RecordService implements RecordInterface
 {
@@ -33,6 +35,8 @@ class RecordService implements RecordInterface
         if($records->count() === 0) {
             return $this->error('No available data in the input date.', Response::HTTP_NOT_FOUND);
         }
+
+        Event::dispatch(new PullData($date, $city));
 
         return $this->success(RecordResource::collection($records),"List of Records", Response::HTTP_OK);
     }
