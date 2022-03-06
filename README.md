@@ -1,64 +1,48 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Weather Forecast Application - Ahmad Sakr
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a test application developed by Ahmad Sakr as a test for Omure.
 
-## About Laravel
+## How to Run
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Please run the below command to migrate the database and seed cities
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<code>php artisan migrate:fresh --seed</code> 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## How to Add/Update/Remove Cities
 
-## Learning Laravel
+Use the current routes: 
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+<code>api/v1/cities</code> **[GET]** to list all available cities
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+<code>api/v1/cities/{city}</code> **[GET]** to list a single city ({city} stand to the name of the city)
 
-## Laravel Sponsors
+<code>api/v1/cities</code> **[POST]** to add new city (name is required and unique)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+<code>api/v1/cities/{city}</code> **[PATCH]** to update existing city
 
-### Premium Partners
+<code>api/v1/cities/{city}</code> **[DELETE]** to delete existing city
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### How Manually Test Pulling Data From Vendor API
 
-## Contributing
+To manually test pulling data from the 3rd party API please use the below commands: 
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+<code>php artisan weather:pull</code>
 
-## Code of Conduct
+<code>php artisan queue:work --queue=pulling --stop-when-empty</code>
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Or you can run <code>php artisan schedule:work</code> to simulate the cron jobs.
 
-## Security Vulnerabilities
+### How To Pull Weather Forecast
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+To pull data from our API ending point, use the following url: 
 
-## License
+<code>api/v1/forecast?date={date}&city={city}</code> **[GET]**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- The parameter **[date]** is required and should be with 'Ymd' format (Example: 20220306)
+- The parameter **[city]** is optional and should be a valid name of a city already added to database.
+If not set, data will be returned for all available cities in the database.
+
+### Unit Test
+
+Please check the written test to test cities CRUD and pulling data (Jobs, events...).
+
