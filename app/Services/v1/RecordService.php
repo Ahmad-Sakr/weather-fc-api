@@ -8,6 +8,7 @@ use App\Events\PullData;
 use App\Http\Requests\v1\RecordRequest;
 use App\Http\Resources\v1\RecordResource;
 use App\Interfaces\v1\RecordInterface;
+use App\Jobs\PullDataFromVendorAPIJob;
 use App\Models\City;
 use App\Models\Record;
 use App\Traits\ApiResponder;
@@ -24,17 +25,19 @@ class RecordService implements RecordInterface
 
     public function forecast($date, $city = null)
     {
-        $builder = Record::query()
-                           ->orderBy('rc_date')
-                           ->whereDate('rc_date', $date);
-        if($city) {
-            $builder->where('city_id', $city->id);
-        }
-        $records = $builder->with('city')
-                           ->get();
+        $records = $this->getRecords($date, $city);
 
         if($records->count() === 0) {
-            throw new ModelNotFoundException('No available data in the input date.');
+            //Try To Get Data From Vendor API
+            $cities = ($city) ? [$city] : City::all();
+            foreach ($cities as $city1) {
+                PullDataFromVendorAPIJob::dispatch($city1);
+            }
+
+            $records = $this->getRecords($date, $city);
+            if($records->count() === 0) {
+                throw new ModelNotFoundException('No available data in the input date.');
+            }
         }
 
         Event::dispatch(new PullData($date, $city));
@@ -85,5 +88,23 @@ class RecordService implements RecordInterface
 
         return $record;
 
+    }
+
+    /**
+     * @param $date
+     * @param $city
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    private function getRecords($date, $city)
+    {
+        $builder = Record::query()
+            ->orderBy('rc_date')
+            ->whereDate('rc_date', $date);
+        if ($city) {
+            $builder->where('city_id', $city->id);
+        }
+        $records = $builder->with('city')
+            ->get();
+        return $records;
     }
 }
