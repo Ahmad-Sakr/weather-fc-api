@@ -28,7 +28,7 @@ class CityController extends Controller
 
     public function show(City $city)
     {
-        return $this->cityInterface->getCityById($city);
+        return $this->cityInterface->getSingleCity($city);
     }
 
     public function update(CityRequest $request, City $city)

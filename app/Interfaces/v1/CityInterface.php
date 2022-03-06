@@ -11,7 +11,7 @@ interface CityInterface
 {
     public function getAllCities();
 
-    public function getCityById(City $city);
+    public function getSingleCity(City $city);
 
     public function storeCity(CityRequest $request, City $city = null);
 

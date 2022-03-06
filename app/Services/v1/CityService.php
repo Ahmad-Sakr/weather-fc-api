@@ -22,7 +22,7 @@ class CityService implements CityInterface
         return $this->success(CityResource::collection(City::all()),"List of Cities", Response::HTTP_OK);
     }
 
-    public function getCityById(City $city)
+    public function getSingleCity(City $city)
     {
         return $this->success(new CityResource($city));
     }
