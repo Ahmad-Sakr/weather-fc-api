@@ -3,9 +3,11 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -52,6 +54,16 @@ class Handler extends ExceptionHandler
                 return $this->error('Validation failure.',Response::HTTP_UNPROCESSABLE_ENTITY, [
                     'errors' => $e->errors()
                 ]);
+            }
+
+            //BadRequest Exception
+            if ($e instanceof BadRequestException) {
+                return $this->error($e->getMessage(),Response::HTTP_BAD_REQUEST);
+            }
+
+            //ModelNotFound Exception
+            if ($e instanceof ModelNotFoundException) {
+                return $this->error($e->getMessage(),Response::HTTP_NOT_FOUND);
             }
         }
 

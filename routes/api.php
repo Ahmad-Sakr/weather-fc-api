@@ -35,13 +35,13 @@ Route::group(['prefix' => 'v1'], function() {
     | 02. Store Records
     |--------------------------------------------------------------------------
     */
-    Route::post('/records', [RecordController::class, 'store']);
+    Route::post('/records', [RecordController::class, 'store'])->name('weather.store');
 
     /*
     |--------------------------------------------------------------------------
     | 03. Forecast
     |--------------------------------------------------------------------------
     */
-    Route::get('/forecast', [RecordController::class, 'index']);
+    Route::get('/forecast', [RecordController::class, 'index'])->name('weather.forecast');
 
 });

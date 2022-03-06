@@ -11,6 +11,7 @@ use App\Interfaces\v1\RecordInterface;
 use App\Models\City;
 use App\Models\Record;
 use App\Traits\ApiResponder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +34,7 @@ class RecordService implements RecordInterface
                            ->get();
 
         if($records->count() === 0) {
-            return $this->error('No available data in the input date.', Response::HTTP_NOT_FOUND);
+            throw new ModelNotFoundException('No available data in the input date.');
         }
 
         Event::dispatch(new PullData($date, $city));

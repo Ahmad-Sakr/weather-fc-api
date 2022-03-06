@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\RecordRequest;
 use App\Interfaces\v1\RecordInterface;
 use App\Models\City;
-use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class RecordController extends Controller
 {
@@ -22,7 +23,7 @@ class RecordController extends Controller
         //Check for Date query parameter
         $date_query = request()->input('date', null);
         if(!$date_query) {
-            throw new Exception('Date parameter is required.');
+            throw new BadRequestException('Date parameter is required.');
         }
         $date = date_format(date_create_from_format('Ymd', $date_query), 'Y-m-d');
 
@@ -32,7 +33,7 @@ class RecordController extends Controller
         if($city_query) {
             $city = City::query()->where('name', $city_query)->first();
             if(!$city) {
-                throw new Exception("City '$city_query' does not exist.");
+                throw new ModelNotFoundException("City '$city_query' does not exist.");
             }
         }
 
